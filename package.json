@@ -1,0 +1,34 @@
+{
+  "name": "CSReact",
+  "version": "0.1.0",
+  "description": "Learn to use react with coffeescript",
+  "main": "public/js/index.js",
+  "dependencies": {
+    "lodash": "^4.11.1",
+    "react": "^15.0.1",
+    "react-dom": "^15.0.1",
+    "react-tap-event-plugin": "^1.0.0"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.12.3",
+    "coffeeify": "^2.0.1",
+    "connect-gzip-static": "^1.0.0",
+    "del": "^2.2.0",
+    "gulp": "^3.9.1",
+    "gulp-browserify": "^0.5.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-gzip": "^1.2.0",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-util": "^3.0.7"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "learn",
+    "react",
+    "gulp"
+  ],
+  "author": "Elmer Yu",
+  "license": "ISC"
+}
