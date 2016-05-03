@@ -46,7 +46,17 @@ ContactForm = React.createClass
     @props.onChange Object.assign {}, @props.value, {description: ev.target.value}
   onSubmit: (ev) ->
     ev.preventDefault()
+    @refs.name.focus()
     @props.onSubmit()
+  componentDidUpdate: (prevProps) ->
+    value = @props.value
+    prev = prevProps.value
+    hasNewError = value.errors? and value.errors isnt prev.errors
+    if @isMounted and hasNewError
+      if value.errors.name
+        @refs.name.focus()
+      else if value.errors.email
+        @refs.email.focus()
   render: ->
     errors = @props.value.errors or {}
     form
@@ -56,12 +66,15 @@ ContactForm = React.createClass
         name: 'name'
         className: 'contact-form-error' if errors.name
         placeholder: 'name (required)'
+        autoFocus: true
+        ref: 'name'
         value: @props.value.name
         onChange: @onNameInput
       input
         name: 'email'
         className: 'contact-form-error' if errors.email
         placeholder: 'email (required)'
+        ref: 'email'
         value: @props.value.email
         onChange: @onEmailInput
       textarea
