@@ -49,3 +49,6 @@ body {
   border: 1px solid #888;
   font-size: 14px;
 }
+.contact-form > input.contact-form-error {
+  border-color: #b30e2f;
+}

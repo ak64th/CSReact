@@ -5,6 +5,7 @@ CONTACT_TEMPLATE =
   name: ''
   email: ''
   description: ''
+  errors: null
 
 Component =
   create: (spec) ->
@@ -47,15 +48,19 @@ ContactForm = React.createClass
     ev.preventDefault()
     @props.onSubmit()
   render: ->
+    errors = @props.value.errors or {}
     form
       className: 'contact-form'
+      noValidate: true
       input
         name: 'name'
+        className: 'contact-form-error' if errors.name
         placeholder: 'name (required)'
         value: @props.value.name
         onChange: @onNameInput
       input
         name: 'email'
+        className: 'contact-form-error' if errors.email
         placeholder: 'email (required)'
         value: @props.value.email
         onChange: @onEmailInput
@@ -98,12 +103,15 @@ onNewContactChange = (newContact) -> setState {newContact}
 onNewContactSubmit = ->
   contact = Object.assign {}, state.newContact,
     { key: state.contacts.length + 1, errors: {} }
-  if contact.name and contact.email
-    setState if Object.keys(contact.errors).length is 0
-      newContact: Object.assign {}, CONTACT_TEMPLATE
-      contacts: state.contacts[..].concat contact
-    else
-      newContact: contact
+  unless contact.name
+    contact.errors.name = ["Please enter your new contact's name"];
+  unless /.+@.+\..+/.test contact.email
+    contact.errors.email = ["Please enter your new contact's email"]
+  setState if Object.keys(contact.errors).length is 0
+    newContact: Object.assign {}, CONTACT_TEMPLATE
+    contacts: state.contacts[..].concat contact
+  else
+    newContact: contact
 
 state = {}
 
