@@ -1,31 +1,10 @@
-# React = require('react')
-# ReactDOM = require('react-dom')
-#
-# { div, h1, h2, ul, li, p, a } = React.DOM
-#
-# contacts = [
-#   {key: 1, name: "James Nelson", email: "james@jamesknelson.com"},
-#   {key: 2, name: "Bob"}
-# ]
-#
-# contactElement = (contact) ->
-#   li
-#     key: contact.key
-#     h2 {}, contact.name
-#     a
-#       href: "mailto#{contact.email}"
-#       contact.email
-#
-# listElements = [contactElement(contact) for contact in contacts when contact.email]
-#
-# ui = div {},
-#   h1 {}, 'Contacts'
-#   ul {}, listElements
-#
-# ReactDOM.render ui, document.getElementById 'react-app'
-
 React = require('react')
 ReactDOM = require('react-dom')
+
+CONTACT_TEMPLATE =
+  name: ''
+  email: ''
+  description: ''
 
 Component =
   create: (spec) ->
@@ -99,7 +78,6 @@ ContactView = React.createClass
     onNewContactChange: React.PropTypes.func.isRequired
     onNewContactSubmit: React.PropTypes.func.isRequired
   render: ->
-    contactItemElements = [contactItem contact for contact in contacts when contact.email]
     div
       className: 'contact-view'
       h1
@@ -107,35 +85,38 @@ ContactView = React.createClass
         'Contacts'
       ul
         className: 'contact-view-list'
-        contactItemElements
+        state.contacts
+          .filter((contact) -> contact.email)
+          .map(contactItem)
       contactForm
         value: @props.newContact
         onChange: @props.onNewContactChange
         onSubmit: @props.onNewContactSubmit
 
+onNewContactChange = (newContact) -> setState {newContact}
+
+onNewContactSubmit = ->
+  contact = Object.assign {}, state.newContact,
+    { key: state.contacts.length + 1, errors: {} }
+  if contact.name and contact.email
+    setState if Object.keys(contact.errors).length is 0
+      newContact: Object.assign {}, CONTACT_TEMPLATE
+      contacts: state.contacts[..].concat contact
+    else
+      newContact: contact
+
 state = {}
 
 setState = (changes) ->
   Object.assign state, changes
-  newState = Object.assign state, {
-    onNewContactChange: (newContact) -> setState {newContact}
-    onNewContactSubmit: -> console.log 'New contact submited'
-      # contact = Object.assign {}, state.newContact, {
-      #   key: state.contacts.length + 1
-      #   errors: {}
-      # }
-      # if contact.name and contact.email
-  }
-  rootElement = React.createElement ContactView, newState
+  rootElement = React.createElement ContactView,
+    Object.assign state, { onNewContactChange, onNewContactSubmit }
   ReactDOM.render rootElement, document.getElementById 'react-app'
 
-contacts = [
-  {key: 1, name: "James K Nelson", email: "james@jamesknelson.com", description: "Front-end Unicorn"},
-  {key: 2, name: "Jim", email: "jim@example.com"},
-  {key: 3, name: "Joe"}
-]
-newContact =
-  name: ''
-  email: ''
-  description: ''
-setState {contacts, newContact}
+setState
+  contacts: [
+    {key: 1, name: "James K Nelson", email: "james@jamesknelson.com", description: "Front-end Unicorn"}
+    {key: 2, name: "Jim", email: "jim@example.com"}
+    {key: 3, name: "Joe"}
+  ]
+  newContact: Object.assign {}, CONTACT_TEMPLATE
